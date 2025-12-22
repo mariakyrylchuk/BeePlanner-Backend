@@ -1,0 +1,33 @@
+[
+  {
+    "id": "req1",
+    "from_user": "Фермер Петренко",
+    "from_user_id": "farmer1",
+    "to_user_id": "ef4ecbeb-53e1-4704-8a66-6ed4e1b18f33",
+    "type": "pollination",
+    "message": "Потрібні бджоли для запилення яблуневого саду",
+    "location": "с. Зелене, Київська обл.",
+    "area_ha": 5,
+    "crop": "Яблуня",
+    "bloom_period": "15.04 - 05.05",
+    "status": "accepted",
+    "created_at": "2024-04-01T10:00:00",
+    "response_message": "Заявку прийнято",
+    "responded_at": "2025-12-13T17:35:38.164381"
+  },
+  {
+    "id": "req2",
+    "from_user": "Фермер Коваленко",
+    "from_user_id": "farmer2",
+    "to_user_id": "ef4ecbeb-53e1-4704-8a66-6ed4e1b18f33",
+    "type": "placement",
+    "message": "Пропоную місце для пасіки на моїх полях",
+    "location": "м. Вінниця",
+    "area_ha": 3,
+    "price_per_month": 0,
+    "status": "rejected",
+    "created_at": "2024-04-02T14:30:00",
+    "response_message": "Заявку відхилено",
+    "responded_at": "2025-12-13T17:35:32.045594"
+  }
+]

@@ -1,0 +1,125 @@
+[
+  {
+    "id": "823180c6-afe5-4eed-95bd-d1748535085e",
+    "email": "mariakyrylchuk04@gmail.com",
+    "name": "Пасіка",
+    "location": "Літин",
+    "hive_count": 25,
+    "type": "стаціонарна",
+    "created_at": "2025-12-08T23:37:33.813742"
+  },
+  {
+    "id": "d038a5a6-8b90-41b8-8f1e-eb545be858d5",
+    "email": "mariakyrylchuk04@gmail.com",
+    "name": "12",
+    "location": "Вінниця",
+    "hive_count": 23,
+    "type": "стаціонарна",
+    "created_at": "2025-12-12T22:51:14.153835"
+  },
+  {
+    "id": "ab148ce0-dddc-4a5f-b87e-e104e63d32c0",
+    "user_id": "test_1765576715712",
+    "name": "Долтилл",
+    "location": "Прьи",
+    "hive_count": 55,
+    "type": "стаціонарна",
+    "created_at": "2025-12-12T23:58:55.585332"
+  },
+  {
+    "id": "4444012d-3a42-437a-905e-6f6b707037e0",
+    "user_id": "user_1765578689854_hzfnyn0pt",
+    "name": "Лог",
+    "location": "Оо",
+    "latitude": null,
+    "longitude": null,
+    "hive_count": 25,
+    "hive_type": "Дадан",
+    "description": "",
+    "created_at": "2025-12-13T00:31:41.562790"
+  },
+  {
+    "id": "fec93158-eb43-4342-96dc-417ac4ad92f2",
+    "user_id": "1765578720366",
+    "name": "Оог",
+    "location": "Літин",
+    "latitude": null,
+    "longitude": null,
+    "hive_count": 25,
+    "hive_type": "Дадан",
+    "description": "",
+    "created_at": "2025-12-13T00:32:02.519556"
+  },
+  {
+    "id": "6accbc5e-4acb-4da6-8b9a-1783a1534480",
+    "user_id": "1765617468182",
+    "name": "Пог",
+    "location": "Пол",
+    "latitude": null,
+    "longitude": null,
+    "hive_count": 28,
+    "hive_type": "Дадан",
+    "description": "",
+    "created_at": "2025-12-13T11:17:50.291954"
+  },
+  {
+    "id": "29b838f2-6c69-4880-b02b-80f4506e1fc6",
+    "user_id": "1765633034796",
+    "name": "Ншщ",
+    "location": "Тть",
+    "latitude": 50.45,
+    "longitude": 30.52,
+    "hive_count": 985,
+    "hive_type": "Дадан",
+    "description": "",
+    "created_at": "2025-12-13T15:37:17.695783"
+  },
+  {
+    "id": "be69c983-77c9-49a0-8363-743a1b11a2d8",
+    "user_id": "1765633881327",
+    "name": "1",
+    "location": "Літин",
+    "latitude": 50.45,
+    "longitude": 30.52,
+    "hive_count": 112,
+    "hive_type": "Дадан",
+    "description": "",
+    "created_at": "2025-12-13T15:51:23.692812"
+  },
+  {
+    "id": "dd905afb-434b-4424-8752-c93cbf667fa6",
+    "user_id": "1765638244257",
+    "name": "Ахах",
+    "location": "Літин",
+    "latitude": 50.45,
+    "longitude": 30.52,
+    "hive_count": 23,
+    "hive_type": "Дадан",
+    "description": "",
+    "created_at": "2025-12-13T17:04:07.996658"
+  },
+  {
+    "id": "6ddefb1e-d2c5-4a72-ba69-a2fddb461a62",
+    "user_id": "ef4ecbeb-53e1-4704-8a66-6ed4e1b18f33",
+    "name": "1",
+    "location": "Літин",
+    "latitude": 50.45,
+    "longitude": 30.52,
+    "hive_count": 38,
+    "hive_type": "Дадан",
+    "description": "",
+    "created_at": "2025-12-13T19:03:57.038983"
+  },
+  {
+    "id": "f5750feb-0876-4cb9-b84a-5707da62fe55",
+    "user_id": "ef4ecbeb-53e1-4704-8a66-6ed4e1b18f33",
+    "name": "2",
+    "location": "Сосни",
+    "latitude": 50.45,
+    "longitude": 30.52,
+    "hive_count": 16,
+    "hive_type": "Дадан",
+    "description": "",
+    "created_at": "2025-12-14T00:05:30.281630"
+  }
+]

@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "name": "Липа дрібнолиста",
+    "bloom_start": "15.06",
+    "bloom_end": "10.07",
+    "coefficient": 1.0,
+    "honey_yield": 800,
+    "pollen_yield": 30,
+    "description": "Основний літній медонос"
+  },
+  {
+    "id": 2,
+    "name": "Гречка",
+    "bloom_start": "20.06",
+    "bloom_end": "30.07",
+    "coefficient": 0.8,
+    "honey_yield": 60,
+    "pollen_yield": 20,
+    "description": "Сільськогосподарська культура"
+  },
+  {
+    "id": 3,
+    "name": "Ріпак",
+    "bloom_start": "01.05",
+    "bloom_end": "25.05",
+    "coefficient": 0.6,
+    "honey_yield": 50,
+    "pollen_yield": 15,
+    "description": "Ранній медонос"
+  },
+  {
+    "id": 4,
+    "name": "Акація",
+    "bloom_start": "10.05",
+    "bloom_end": "31.05",
+    "coefficient": 0.9,
+    "honey_yield": 700,
+    "pollen_yield": 25,
+    "description": "Весняний медонос"
+  },
+  {
+    "id": 5,
+    "name": "Конюшина",
+    "bloom_start": "15.06",
+    "bloom_end": "15.08",
+    "coefficient": 0.7,
+    "honey_yield": 100,
+    "pollen_yield": 40,
+    "description": "Луговий медонос"
+  }
+]

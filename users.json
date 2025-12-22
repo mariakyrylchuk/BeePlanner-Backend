@@ -1,0 +1,60 @@
+[
+  {
+    "id": "b62304b6-e142-4cf0-8b16-5da2297de59e",
+    "email": "test@example.com",
+    "password": "123456",
+    "full_name": "Тестовий Користувач",
+    "user_type": "Пасічник",
+    "created_at": "2025-12-06T11:22:19.012264"
+  },
+  {
+    "id": "094cca9f-6583-482d-804f-ffd6e8e1fae8",
+    "email": "user532@test.com",
+    "password": "123456",
+    "full_name": "Тестовий Користувач",
+    "user_type": "Пасичник",
+    "created_at": "2025-12-06T12:55:10.914486"
+  },
+  {
+    "id": "ede65651-1b29-4a0e-9bd9-cea91cae00ef",
+    "email": "user452@test.com",
+    "password": "123456",
+    "full_name": "Тестовий Користувач",
+    "user_type": "Пасичник",
+    "created_at": "2025-12-06T12:57:00.708287"
+  },
+  {
+    "id": "117fbc6a-4e2b-4a56-8df2-c89bfa9ffc7f",
+    "email": "user760@test.com",
+    "password": "123456",
+    "full_name": "Новий Користувач",
+    "user_type": "Пасичник",
+    "created_at": "2025-12-06T13:13:10.891600"
+  },
+  {
+    "id": "df3ac169-f3e2-45b3-bd8a-8e5710a5d927",
+    "email": "user701@test.com",
+    "password": "123456",
+    "full_name": "Новий Користувач",
+    "user_type": "Пасичник",
+    "created_at": "2025-12-06T13:36:03.059694"
+  },
+  {
+    "id": "5c1d5a79-a7f0-45bf-bec3-c11a20e8ac72",
+    "email": "user382@test.com",
+    "password": "123456",
+    "full_name": "Новий Користувач",
+    "user_type": "Пасичник",
+    "created_at": "2025-12-06T14:14:54.676655"
+  },
+  {
+    "id": "ef4ecbeb-53e1-4704-8a66-6ed4e1b18f33",
+    "email": "mariakyrylchuk04@gmail.com",
+    "password": "Ria2005",
+    "full_name": "Кирильчук Марія Леонідівна",
+    "user_type": "Пасічник",
+    "created_at": "2025-12-06T14:25:45.768884",
+    "apiaries_count": 2,
+    "phone": "+380930828222"
+  }
+]
