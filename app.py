@@ -25,6 +25,26 @@ ROUTES_FILE = 'routes.json'
 COOPERATION_FILE = 'cooperation.json'
 LOCATIONS_FILE = 'locations.json'
 
+def utf8_response(func):
+    """Декоратор для автоматичного додавання UTF-8 заголовків"""
+    def wrapper(*args, **kwargs):
+        response = func(*args, **kwargs)
+        if isinstance(response, tuple):
+            # Якщо функція повертає (response, status)
+            response[0].headers['Content-Type'] = 'application/json; charset=utf-8'
+            return response
+        elif hasattr(response, 'headers'):
+            # Якщо повертає просто response
+            response.headers['Content-Type'] = 'application/json; charset=utf-8'
+            return response
+        return response
+    return wrapper
+
+# Використання:
+@app.route('/api/profile', methods=['GET'])
+@utf8_response
+def get_profile():
+    # ... ваш код ...
 
 @app.after_request
 def after_request(response):
@@ -307,7 +327,8 @@ def get_profile():
                 notes = load_data(JOURNAL_FILE)
                 user_notes = [n for n in notes if n.get('user_id') == user_id]
 
-                return jsonify({
+                # Створюємо відповідь
+                response_data = {
                     'success': True,
                     'profile': {
                         'id': user['id'],
@@ -322,7 +343,12 @@ def get_profile():
                         'total_hives': total_hives,
                         'journal_entries': len(user_notes)
                     }
-                })
+                }
+
+                # Створюємо JSON відповідь з правильним кодуванням
+                response = jsonify(response_data)
+                response.headers['Content-Type'] = 'application/json; charset=utf-8'
+                return response
 
         return jsonify({'success': False, 'message': 'Профіль не знайдено'})
 
