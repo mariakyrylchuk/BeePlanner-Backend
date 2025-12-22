@@ -1192,6 +1192,20 @@ def get_weather_forecast():
         return jsonify({'success': False, 'message': f'Помилка: {str(e)}'})
 
 
+@app.route('/api/weather', methods=['GET'])
+def get_weather():
+    """Ендпоінт /api/weather - перенаправляє на /api/weather/real"""
+    try:
+        lat = request.args.get('lat', 50.45)
+        lon = request.args.get('lon', 30.52)
+
+        # Просто викликаємо ту саму функцію, що й для /api/weather/real
+        return get_real_weather()
+
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Помилка отримання погоди: {str(e)}'})
+
+
 @app.route('/api/weather/real', methods=['GET'])
 def get_real_weather():
     """Отримання реальної погоди за геолокацією"""
