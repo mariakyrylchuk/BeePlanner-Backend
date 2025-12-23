@@ -40,150 +40,6 @@ def utf8_response(func):
         return response
     return wrapper
 
-# Використання:
-@app.route('/api/profile', methods=['GET'])
-@utf8_response
-def get_profile():
-    # ... ваш код ...
-
-@app.after_request
-def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-    return response
-
-
-def init_files():
-    """Створює пусті файли, якщо їх немає"""
-    files = [USERS_FILE, APIARIES_FILE, JOURNAL_FILE, VERIFICATIONS_FILE,
-             REVIEWS_FILE, LAYERS_FILE, HONEY_PLANTS_FILE, NOTIFICATIONS_FILE,
-             ROUTES_FILE, COOPERATION_FILE, LOCATIONS_FILE]
-
-    for file in files:
-        if not os.path.exists(file):
-            with open(file, 'w', encoding='utf-8') as f:
-                json.dump([], f, ensure_ascii=False, indent=2)
-
-
-def load_data(filename):
-    """Завантажує дані з файлу"""
-    try:
-        if os.path.exists(filename):
-            with open(filename, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        return []
-    except:
-        return []
-
-
-def save_data(filename, data):
-    """Зберігає дані у файл"""
-    try:
-        with open(filename, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
-        return True
-    except:
-        return False
-
-
-def hash_password(password):
-    """Хешує пароль"""
-    return hashlib.sha256(password.encode()).hexdigest()
-
-
-def verify_password(password, hashed_password):
-    """Перевіряє пароль"""
-    return hash_password(password) == hashed_password
-
-
-def get_month_name(month):
-    months = [
-        'Січень', 'Лютий', 'Березень', 'Квітень',
-        'Травень', 'Червень', 'Липень', 'Серпень',
-        'Вересень', 'Жовтень', 'Листопад', 'Грудень'
-    ]
-    return months[month - 1] if 1 <= month <= 12 else 'Невідомо'
-
-
-def get_demo_weather_data(lat, lon):
-    """Повертає демо-дані погоди"""
-    current_date = datetime.now()
-
-    # Генеруємо демо-дані на основі пори року
-    current_month = current_date.month
-    if 5 <= current_month <= 9:  # Літо/весна
-        base_temp = random.randint(18, 28)
-    else:  # Осінь/зима
-        base_temp = random.randint(5, 15)
-
-    current_weather = {
-        'temp': base_temp,
-        'feels_like': base_temp - random.randint(0, 3),
-        'humidity': random.randint(50, 85),
-        'pressure': random.randint(990, 1020),
-        'wind_speed': round(random.uniform(1.0, 6.0), 1),
-        'weather': [{
-            'main': random.choice(['Clear', 'Clouds', 'Clouds', 'Partly Cloudy']),
-            'description': random.choice(['ясно', 'хмарно', 'мінлива хмарність']),
-            'icon': random.choice(['01d', '02d', '03d', '04d'])
-        }],
-        'sunrise': int((datetime.now().replace(hour=5, minute=30, second=0).timestamp())),
-        'sunset': int((datetime.now().replace(hour=20, minute=45, second=0).timestamp())),
-        'clouds': random.randint(0, 50),
-        'visibility': random.randint(8000, 12000)
-    }
-
-    # Демо прогноз
-    forecast = []
-    for i in range(1, 4):
-        date = (current_date + timedelta(days=i)).strftime('%Y-%m-%d')
-
-        if base_temp >= 20:
-            temp_day = base_temp + random.randint(-3, 3)
-            temp_night = temp_day - random.randint(5, 10)
-        else:
-            temp_day = base_temp + random.randint(-2, 2)
-            temp_night = temp_day - random.randint(3, 8)
-
-        condition = random.choice(['sunny', 'partly_cloudy', 'cloudy'])
-
-        if temp_day >= 15 and temp_day <= 28 and condition != 'cloudy':
-            bee_activity = 'висока'
-            foraging_hours = 10
-        elif temp_day >= 10 and temp_day <= 30:
-            bee_activity = 'середня'
-            foraging_hours = 7
-        else:
-            bee_activity = 'низька'
-            foraging_hours = 4
-
-        forecast.append({
-            'date': date,
-            'temp_day': temp_day,
-            'temp_night': temp_night,
-            'humidity': random.randint(55, 90),
-            'wind_speed': round(random.uniform(1.0, 8.0), 1),
-            'precipitation': random.choice([0, 0, 0, 5, 10]),
-            'condition': condition,
-            'bee_activity': bee_activity,
-            'foraging_hours': foraging_hours
-        })
-
-    return jsonify({
-        'success': True,
-        'current': current_weather,
-        'forecast': forecast,
-        'location': {
-            'name': 'Демо локація',
-            'country': 'Україна'
-        },
-        'demo_data': True,
-        'message': 'Використовуються демо-дані. Додайте API ключ для реальної погоди.',
-        'timestamp': datetime.now().isoformat()
-    })
-
-
 # ==================== БАЗОВІ МАРШРУТИ ====================
 @app.route('/api/health', methods=['GET'])
 def health():
@@ -308,6 +164,7 @@ def login():
 
 # ==================== ПРОФІЛЬ ====================
 @app.route('/api/profile', methods=['GET'])
+@utf8_response  # ← ДОДАНО декоратор для UTF-8
 def get_profile():
     try:
         user_id = request.args.get('user_id')
@@ -1541,6 +1398,144 @@ def get_apiary_statistics(apiary_id):
 
     except Exception as e:
         return jsonify({'success': False, 'message': f'Помилка: {str(e)}'})
+
+
+def init_files():
+    """Створює пусті файли, якщо їх немає"""
+    files = [USERS_FILE, APIARIES_FILE, JOURNAL_FILE, VERIFICATIONS_FILE,
+             REVIEWS_FILE, LAYERS_FILE, HONEY_PLANTS_FILE, NOTIFICATIONS_FILE,
+             ROUTES_FILE, COOPERATION_FILE, LOCATIONS_FILE]
+
+    for file in files:
+        if not os.path.exists(file):
+            with open(file, 'w', encoding='utf-8') as f:
+                json.dump([], f, ensure_ascii=False, indent=2)
+
+
+def load_data(filename):
+    """Завантажує дані з файлу"""
+    try:
+        if os.path.exists(filename):
+            with open(filename, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        return []
+    except:
+        return []
+
+
+def save_data(filename, data):
+    """Зберігає дані у файл"""
+    try:
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        return True
+    except:
+        return False
+
+
+def hash_password(password):
+    """Хешує пароль"""
+    return hashlib.sha256(password.encode()).hexdigest()
+
+
+def verify_password(password, hashed_password):
+    """Перевіряє пароль"""
+    return hash_password(password) == hashed_password
+
+
+def get_month_name(month):
+    months = [
+        'Січень', 'Лютий', 'Березень', 'Квітень',
+        'Травень', 'Червень', 'Липень', 'Серпень',
+        'Вересень', 'Жовтень', 'Листопад', 'Грудень'
+    ]
+    return months[month - 1] if 1 <= month <= 12 else 'Невідомо'
+
+
+def get_demo_weather_data(lat, lon):
+    """Повертає демо-дані погоди"""
+    current_date = datetime.now()
+
+    # Генеруємо демо-дані на основі пори року
+    current_month = current_date.month
+    if 5 <= current_month <= 9:  # Літо/весна
+        base_temp = random.randint(18, 28)
+    else:  # Осінь/зима
+        base_temp = random.randint(5, 15)
+
+    current_weather = {
+        'temp': base_temp,
+        'feels_like': base_temp - random.randint(0, 3),
+        'humidity': random.randint(50, 85),
+        'pressure': random.randint(990, 1020),
+        'wind_speed': round(random.uniform(1.0, 6.0), 1),
+        'weather': [{
+            'main': random.choice(['Clear', 'Clouds', 'Clouds', 'Partly Cloudy']),
+            'description': random.choice(['ясно', 'хмарно', 'мінлива хмарність']),
+            'icon': random.choice(['01d', '02d', '03d', '04d'])
+        }],
+        'sunrise': int((datetime.now().replace(hour=5, minute=30, second=0).timestamp())),
+        'sunset': int((datetime.now().replace(hour=20, minute=45, second=0).timestamp())),
+        'clouds': random.randint(0, 50),
+        'visibility': random.randint(8000, 12000)
+    }
+
+    # Демо прогноз
+    forecast = []
+    for i in range(1, 4):
+        date = (current_date + timedelta(days=i)).strftime('%Y-%m-%d')
+
+        if base_temp >= 20:
+            temp_day = base_temp + random.randint(-3, 3)
+            temp_night = temp_day - random.randint(5, 10)
+        else:
+            temp_day = base_temp + random.randint(-2, 2)
+            temp_night = temp_day - random.randint(3, 8)
+
+        condition = random.choice(['sunny', 'partly_cloudy', 'cloudy'])
+
+        if temp_day >= 15 and temp_day <= 28 and condition != 'cloudy':
+            bee_activity = 'висока'
+            foraging_hours = 10
+        elif temp_day >= 10 and temp_day <= 30:
+            bee_activity = 'середня'
+            foraging_hours = 7
+        else:
+            bee_activity = 'низька'
+            foraging_hours = 4
+
+        forecast.append({
+            'date': date,
+            'temp_day': temp_day,
+            'temp_night': temp_night,
+            'humidity': random.randint(55, 90),
+            'wind_speed': round(random.uniform(1.0, 8.0), 1),
+            'precipitation': random.choice([0, 0, 0, 5, 10]),
+            'condition': condition,
+            'bee_activity': bee_activity,
+            'foraging_hours': foraging_hours
+        })
+
+    return jsonify({
+        'success': True,
+        'current': current_weather,
+        'forecast': forecast,
+        'location': {
+            'name': 'Демо локація',
+            'country': 'Україна'
+        },
+        'demo_data': True,
+        'message': 'Використовуються демо-дані. Додайте API ключ для реальної погоди.',
+        'timestamp': datetime.now().isoformat()
+    })
+
+
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    return response
 
 
 # ==================== ЗАПУСК ====================
