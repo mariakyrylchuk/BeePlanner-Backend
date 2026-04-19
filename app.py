@@ -216,9 +216,78 @@ def login():
 
 
 # ==================== ПРОФІЛЬ ====================
+@app.route('/api/profile', methods=['POST'])
+def create_profile():
+    """Створення нового профілю"""
+    try:
+        data = request.json
+        user_id = data.get('user_id')
+        email = data.get('email')
+        full_name = data.get('full_name', 'Новий користувач')
+        user_type = data.get('user_type', 'пасічник')
+        phone = data.get('phone', '')
+        created_at = data.get('created_at', datetime.now().isoformat())
+
+        if not user_id or not email:
+            return jsonify({'success': False, 'message': 'Не вказано ID користувача або email'})
+
+        users = load_data(USERS_FILE)
+
+        # Перевіряємо чи вже є такий користувач
+        for user in users:
+            if user['id'] == user_id:
+                return jsonify({
+                    'success': True,
+                    'message': 'Профіль вже існує',
+                    'profile': user
+                })
+
+        # Створюємо нового користувача
+        new_user = {
+            'id': user_id,
+            'email': email,
+            'full_name': full_name,
+            'phone': phone,
+            'user_type': user_type,
+            'is_verified': False,
+            'apiaries_count': 0,
+            'created_at': created_at,
+            'last_login': datetime.now().isoformat()
+        }
+
+        users.append(new_user)
+        save_data(USERS_FILE, users)
+
+        # Створюємо відповідь
+        response_data = {
+            'success': True,
+            'message': 'Профіль успішно створено',
+            'profile': {
+                'id': new_user['id'],
+                'email': new_user['email'],
+                'full_name': new_user['full_name'],
+                'user_type': new_user['user_type'],
+                'phone': new_user['phone'],
+                'is_verified': new_user['is_verified'],
+                'created_at': new_user['created_at'],
+                'last_login': new_user['last_login'],
+                'apiaries_count': 0,
+                'total_hives': 0,
+                'journal_entries': 0
+            }
+        }
+
+        response = jsonify(response_data)
+        response.headers['Content-Type'] = 'application/json; charset=utf-8'
+        return response
+
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Помилка: {str(e)}'})
+
 @app.route('/api/profile', methods=['GET'])
 @utf8_response
 def get_profile():
+    """Отримання профілю користувача"""
     try:
         user_id = request.args.get('user_id')
 
@@ -255,7 +324,6 @@ def get_profile():
                     }
                 }
 
-                # Створюємо JSON відповідь з правильним кодуванням
                 response = jsonify(response_data)
                 response.headers['Content-Type'] = 'application/json; charset=utf-8'
                 return response
@@ -317,30 +385,6 @@ def update_profile():
 
 
 # ==================== ПАСІКИ ====================
-@app.route('/api/apiaries', methods=['GET'])
-def get_apiaries():
-    try:
-        user_id = request.args.get('user_id')
-
-        if not user_id:
-            return jsonify({'success': False, 'message': 'Користувач не вказаний'})
-
-        apiaries = load_data(APIARIES_FILE)
-        user_apiaries = [a for a in apiaries if a.get('user_id') == user_id]
-
-        # Сортуємо за датою створення (нові спочатку)
-        user_apiaries.sort(key=lambda x: x.get('created_at', ''), reverse=True)
-
-        return jsonify({
-            'success': True,
-            'apiaries': user_apiaries,
-            'count': len(user_apiaries)
-        })
-
-    except Exception as e:
-        return jsonify({'success': False, 'message': f'Помилка: {str(e)}'})
-
-
 @app.route('/api/apiary/<apiary_id>', methods=['GET'])
 def get_apiary(apiary_id):
     try:
@@ -371,6 +415,48 @@ def get_apiary(apiary_id):
         return jsonify({'success': False, 'message': f'Помилка: {str(e)}'})
 
 
+@app.route('/api/geocode', methods=['POST'])
+def geocode_location():
+    """Пошук координат за назвою місця"""
+    try:
+        data = request.json
+        location = data.get('location', '')
+
+        if not location:
+            return jsonify({'success': False, 'message': 'Локація не вказана'})
+
+        # Використовуємо OpenStreetMap Nominatim
+        import requests
+        url = f"https://nominatim.openstreetmap.org/search?q={location}&format=json&limit=1"
+        headers = {'User-Agent': 'BeePlanner/1.0'}
+
+        response = requests.get(url, headers=headers)
+
+        if response.status_code == 200:
+            results = response.json()
+            if results:
+                lat = float(results[0]['lat'])
+                lon = float(results[0]['lon'])
+                return jsonify({
+                    'success': True,
+                    'latitude': lat,
+                    'longitude': lon,
+                    'display_name': results[0].get('display_name', location)
+                })
+
+        # Якщо не знайдено, повертаємо координати Літина
+        return jsonify({
+            'success': True,
+            'latitude': 49.2277,
+            'longitude': 28.4068,
+            'display_name': location,
+            'note': 'Точні координати не знайдено, використано приблизні'
+        })
+
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Помилка: {str(e)}'})
+
+
 @app.route('/api/add-apiary', methods=['POST'])
 def add_apiary():
     try:
@@ -393,13 +479,35 @@ def add_apiary():
         if not user_exists:
             return jsonify({'success': False, 'message': 'Користувача не знайдено'})
 
+        # Отримуємо координати, якщо не передані
+        latitude = data.get('latitude')
+        longitude = data.get('longitude')
+
+        # Якщо координати не передані, але є локація - отримуємо з геокодера
+        if (not latitude or not longitude) and data.get('location'):
+            try:
+                # Викликаємо функцію геокодування
+                geo_data = geocode_location_internal(data.get('location'))
+                if geo_data:
+                    latitude = geo_data['latitude']
+                    longitude = geo_data['longitude']
+            except Exception as e:
+                print(f"Помилка геокодування: {e}")
+                # Якщо помилка, ставимо координати Літина
+                latitude = 49.2277
+                longitude = 28.4068
+        elif not latitude or not longitude:
+            # Якщо немає ні координат, ні локації - ставимо Літин
+            latitude = 49.2277
+            longitude = 28.4068
+
         new_apiary = {
             'id': str(uuid.uuid4()),
             'user_id': user_id,
             'name': data.get('name', 'Нова пасіка'),
             'location': data.get('location', 'Не вказано'),
-            'latitude': data.get('latitude', 50.45),
-            'longitude': data.get('longitude', 30.52),
+            'latitude': float(latitude),
+            'longitude': float(longitude),
             'hive_count': int(data.get('hive_count', 0)),
             'hive_type': data.get('hive_type', 'Дадан'),
             'description': data.get('description', ''),
@@ -419,6 +527,27 @@ def add_apiary():
 
     except Exception as e:
         return jsonify({'success': False, 'message': f'Помилка: {str(e)}'})
+
+
+def geocode_location_internal(location):
+    """Внутрішня функція для геокодування"""
+    try:
+        import requests
+        url = f"https://nominatim.openstreetmap.org/search?q={location}&format=json&limit=1"
+        headers = {'User-Agent': 'BeePlanner/1.0'}
+
+        response = requests.get(url, headers=headers, timeout=5)
+
+        if response.status_code == 200:
+            results = response.json()
+            if results:
+                return {
+                    'latitude': float(results[0]['lat']),
+                    'longitude': float(results[0]['lon'])
+                }
+    except:
+        pass
+    return None
 
 
 @app.route('/api/update-apiary', methods=['POST'])
@@ -1227,7 +1356,7 @@ def get_real_weather():
         lat = request.args.get('lat', 50.45)
         lon = request.args.get('lon', 30.52)
 
-        # ВАШ НОВИЙ API КЛЮЧ
+        # API КЛЮЧ
         API_KEY = '2d5269ffcc91aebf9cb1193ca0507537'
 
         # Перевірка ключа
