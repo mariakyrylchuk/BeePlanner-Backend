@@ -417,7 +417,7 @@ def get_apiary(apiary_id):
 
 @app.route('/api/geocode', methods=['POST'])
 def geocode_location():
-    """Пошук координат за назвою місця"""
+    """Пошук координат за назвою місця - PositionStack API"""
     try:
         data = request.json
         location = data.get('location', '')
@@ -425,26 +425,31 @@ def geocode_location():
         if not location:
             return jsonify({'success': False, 'message': 'Локація не вказана'})
 
-        # Використовуємо OpenStreetMap Nominatim
         import requests
-        url = f"https://nominatim.openstreetmap.org/search?q={location}&format=json&limit=1"
-        headers = {'User-Agent': 'BeePlanner/1.0'}
+        API_KEY = '9d5863bcceddad87ba9d1bd5d41192fe'
+        url = f"http://api.positionstack.com/v1/forward?access_key={API_KEY}&query={location}&limit=1"
 
-        response = requests.get(url, headers=headers)
+        print(f"📍 Геокодування: {location}")
+        response = requests.get(url, timeout=10)
 
         if response.status_code == 200:
-            results = response.json()
-            if results:
-                lat = float(results[0]['lat'])
-                lon = float(results[0]['lon'])
-                return jsonify({
-                    'success': True,
-                    'latitude': lat,
-                    'longitude': lon,
-                    'display_name': results[0].get('display_name', location)
-                })
+            result = response.json()
+            if result.get('data') and len(result['data']) > 0:
+                location_data = result['data'][0]
+                lat = location_data.get('latitude')
+                lon = location_data.get('longitude')
 
-        # Якщо не знайдено, повертаємо координати Літина
+                if lat and lon:
+                    print(f"✅ Знайдено: {lat}, {lon}")
+                    return jsonify({
+                        'success': True,
+                        'latitude': lat,
+                        'longitude': lon,
+                        'display_name': location_data.get('label', location)
+                    })
+
+        # Якщо не знайдено - повертаємо координати Літина
+        print(f"⚠️ Не знайдено, використовуємо Літин")
         return jsonify({
             'success': True,
             'latitude': 49.2277,
@@ -454,6 +459,7 @@ def geocode_location():
         })
 
     except Exception as e:
+        print(f"❌ Помилка геокодування: {str(e)}")
         return jsonify({'success': False, 'message': f'Помилка: {str(e)}'})
 
 
